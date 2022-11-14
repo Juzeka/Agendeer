@@ -9,15 +9,19 @@ from servicos.factory import ServicoFactory
 from agendamentos.models import Agendamento
 
 
+DATE_05_11_2022 = '2022-11-05'
+HORARIO_14_00 = '14:00'
+HORARIO_14_30 = '14:30'
+
 class AgendamentoViewSetTestCase(TestCase):
     models_class = Agendamento
 
     def setUp(self):
         self.cliente1 = ClienteFactory()
-        self.disponibilidade = DisponibilidadeFactory(data='2022-11-05')
+        self.disponibilidade = DisponibilidadeFactory(data=DATE_05_11_2022)
         self.disponibilidade.horarios.add(
-            HorarioFactory(horario='14:00'),
-            HorarioFactory(horario='14:30')
+            HorarioFactory(horario=HORARIO_14_00),
+            HorarioFactory(horario=HORARIO_14_30)
         )
 
         self.funcionario1 = FuncionarioFactory()
@@ -27,23 +31,41 @@ class AgendamentoViewSetTestCase(TestCase):
         self.agendamento1 = AgendamentoFactory(
             cliente=self.cliente1,
             funcionario=self.funcionario1,
-            data='2022-11-05',
-            horario='14:30'
+            data=DATE_05_11_2022,
+            horario=HORARIO_14_30
         )
         self.agendamento2 = AgendamentoFactory(
             cliente=self.cliente1,
             funcionario=self.funcionario1,
-            data='2022-11-05',
-            horario='14:00'
+            data=DATE_05_11_2022,
+            horario=HORARIO_14_00
         )
 
-    def test_criar_agendamento(self):
+    def test_criar_agendamento_cliente_existente(self):
         data = {
-            "cliente": self.cliente1.pk,
-            "funcionario": self.funcionario1.pk,
-            "servico": self.servico1.pk,
-            "data": "2022-11-05",
-            "horario": "14:00",
+            'cliente': self.cliente1.pk,
+            'funcionario': self.funcionario1.pk,
+            'servico': self.servico1.pk,
+            'data': DATE_05_11_2022,
+            'horario': HORARIO_14_00,
+        }
+
+        response = self.client.post(
+            '/v1/agendamentos/',
+            data=data,
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, HTTP_201_CREATED)
+
+    def test_criar_agendamento_cliente_inexistente(self):
+        data = {
+            'nome_full': 'Rafael Gomes de Almeida',
+            'whatsapp': '86998215671',
+            'funcionario': self.funcionario1.pk,
+            'servico': self.servico1.pk,
+            'data': DATE_05_11_2022,
+            'horario': HORARIO_14_00,
         }
 
         response = self.client.post(

@@ -9,15 +9,20 @@ from horarios.factory import HorarioFactory
 from parameterized import parameterized
 
 
+DATE_05_11_2022 = '2022-11-05'
+HORARIO_14_00 = '14:00'
+HORARIO_14_30 = '14:30'
+
+
 class AgendamentoServiceTestCase(TestCase):
     model_class = Agendamento
     service_class = AgendamentoService
 
     def setUp(self):
-        self.disponibilidade = DisponibilidadeFactory(data='2022-11-05')
+        self.disponibilidade = DisponibilidadeFactory(data=DATE_05_11_2022)
         self.disponibilidade.horarios.add(
-            HorarioFactory(horario='14:00'),
-            HorarioFactory(horario='14:30')
+            HorarioFactory(horario=HORARIO_14_00),
+            HorarioFactory(horario=HORARIO_14_30)
         )
 
         self.funcionario1 = FuncionarioFactory()
@@ -26,8 +31,8 @@ class AgendamentoServiceTestCase(TestCase):
     def test_desativar_horario_data_funcionario(self):
         agendamento = AgendamentoFactory(
             funcionario=self.funcionario1,
-            data='2022-11-05',
-            horario='14:30'
+            data=DATE_05_11_2022,
+            horario=HORARIO_14_30
         )
 
         self.service_class(
@@ -49,8 +54,8 @@ class AgendamentoServiceTestCase(TestCase):
     def test_ativar_horario_data_funcionario(self):
         agendamento = AgendamentoFactory(
             funcionario=self.funcionario1,
-            data='2022-11-05',
-            horario='14:00'
+            data=DATE_05_11_2022,
+            horario=HORARIO_14_00
         )
 
         self.service_class(

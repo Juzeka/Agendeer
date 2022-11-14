@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from .serializers import AgendamentoSerializerAll
 from .models import Agendamento
 from .services import AgendamentoService
+from clientes.models import Cliente
+from clientes.services import ClienteService
 
 
 class AgendamentoViewSet(ModelViewSet):
@@ -14,6 +16,22 @@ class AgendamentoViewSet(ModelViewSet):
 
     def get_queryset(self):
         return self.model_class.objects.filter(ativo=True)
+
+    def create(self, request, *args, **kwargs):
+        cliente = Cliente.objects.filter(
+            pk=request.data.get('cliente')
+        ).first()
+
+        if not isinstance(cliente, Cliente):
+            data = request.data
+            cliente = ClienteService(
+                nome_full=data.get('nome_full'),
+                whatsapp=data.get('whatsapp')
+            ).new_cliente_em_agendamento()
+
+        request.data.update({'cliente': cliente.pk})
+
+        return super().create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         super().perform_create(serializer)

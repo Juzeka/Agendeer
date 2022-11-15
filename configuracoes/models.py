@@ -14,6 +14,11 @@ class Configuracao(models.Model):
         default=True,
         verbose_name='Enviar mensagem automaticas'
     )
+    grupos_permissao = models.BooleanField(
+        auto_created=True,
+        default=False,
+        verbose_name='Grupos de permissões padrão'
+    )
     agendamento = models.BooleanField(
         auto_created=True,
         default=True,

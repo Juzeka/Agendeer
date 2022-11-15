@@ -3,6 +3,9 @@ from rest_framework.status import HTTP_200_OK
 from disponibilidades.factory import DisponibilidadeFactory
 from horarios.factory import HorarioFactory
 from funcionarios.factory import FuncionarioFactory
+from authentication.factorys.user import UserFactory
+from django.contrib.auth.models import User
+from rest_framework.test import APIClient, APITestCase
 
 
 DATE_15_11_2022 = '2022-11-15'
@@ -16,18 +19,32 @@ class FuncionarioViewSetTestCase(TestCase):
         self.disponibilidade1 = DisponibilidadeFactory(data=DATE_15_11_2022)
         self.disponibilidade1.horarios.add(self.horario1, self.horario2)
 
-        self.funcionario1 = FuncionarioFactory()
+        self.user = User.objects.create(username='rafael')
+        self.user.set_password('12345')
+        self.user.save()
+
+        self.funcionario1 = FuncionarioFactory(user=self.user)
         self.funcionario1.disponibilidades.add(self.disponibilidade1)
 
+        self.data_token = self.client.post(
+            '/v1/auth/token/',
+            data={
+                'username': 'rafael',
+                'password': '12345'
+            }
+        )
+
     def test_get_horarios_disponiveis_data(self):
+        import ipdb ; ipdb.set_trace()
         data = {
             'pk': self.funcionario1.pk,
             'data': DATE_15_11_2022
         }
+        self.clien
         response = self.client.get(
             '/v1/funcionarios/get_horarios_disponiveis_data/',
             data=data,
-            content_type='application/json'
+            headers={'Authorization': f'Bearer {self.data_token.data.get("access")}'}
         )
 
         expected_result = [

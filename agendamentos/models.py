@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Agendamento(models.Model):
+    # criar um campo de indentificação unico do agendamento para enviar para o cliente
     cliente = models.ForeignKey('clientes.Cliente', on_delete=models.PROTECT)
     funcionario = models.ForeignKey(
         'funcionarios.Funcionario',

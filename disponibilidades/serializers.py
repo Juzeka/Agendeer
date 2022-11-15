@@ -6,3 +6,4 @@ class DisponibilidadeSerializerAll(serializers.ModelSerializer):
     class Meta:
         model = Disponibilidade
         fields = '__all__'
+        depth = 2

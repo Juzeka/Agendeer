@@ -6,27 +6,21 @@ from rest_framework.status import HTTP_200_OK
 from .serializers import FuncionarioSerializerAll
 from .models import Funcionario
 from agendamentos.models import Agendamento
-from rest_framework.authentication import (
-    SessionAuthentication,
-    BasicAuthentication
-)
-from rest_framework.permissions import IsAuthenticated
 from datetime import date
 from .services import FuncionarioService
 
 
 class FuncionarioViewSet(ModelViewSet):
     service_class = FuncionarioService
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # permission_classes = [IsAuthenticated]
     serializer_class = FuncionarioSerializerAll
     queryset = Funcionario.objects.all()
 
+    def get_funcionario(self, request):
+        return Funcionario.objects.filter(user=request.user).first()
+
     @action(methods=['get'], detail=False)
     def get_agendamentos_today(self, request):
-        # import ipdb ; ipdb.set_trace()
-        # funcionario = Funcionario.objects.filter(user=request.user).first()
-        funcionario = None
+        funcionario = self.get_funcionario(request)
         data = Agendamento.objects.filter(
             funcionario=funcionario,
             data=date.today()
@@ -36,9 +30,7 @@ class FuncionarioViewSet(ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def get_agendamentos_all(self, request):
-        # import ipdb ; ipdb.set_trace()
-        # funcionario = Funcionario.objects.filter(user=request.user).first()
-        funcionario = None
+        funcionario = self.get_funcionario(request)
         data = Agendamento.objects.filter(
             funcionario=funcionario,
         ).values()

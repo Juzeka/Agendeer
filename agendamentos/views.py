@@ -11,6 +11,8 @@ from clientes.services import ClienteService
 
 
 class AgendamentoViewSet(ModelViewSet):
+    authentication_classes = []
+    permission_classes = []
     serializer_class = AgendamentoSerializerAll
     model_class = Agendamento
 
@@ -43,6 +45,8 @@ class AgendamentoViewSet(ModelViewSet):
             horario=instance.horario,
             funcionario=instance.funcionario.pk
         ).desativar_horario_data_funcionario()
+
+    #criar endpoint para usuario cancelar seu agendamento
 
     @action(methods=['get'], detail=True)
     def cancelar(self, request, pk):

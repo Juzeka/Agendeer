@@ -6,3 +6,4 @@ class ConfiguracaoSerializerAll(serializers.ModelSerializer):
     class Meta:
         model = Configuracao
         fields = '__all__'
+        depth = 2

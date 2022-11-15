@@ -3,9 +3,7 @@ from rest_framework.status import HTTP_200_OK
 from disponibilidades.factory import DisponibilidadeFactory
 from horarios.factory import HorarioFactory
 from funcionarios.factory import FuncionarioFactory
-from authentication.factorys.user import UserFactory
 from django.contrib.auth.models import User
-from rest_framework.test import APIClient, APITestCase
 
 
 DATE_15_11_2022 = '2022-11-15'
@@ -35,12 +33,10 @@ class FuncionarioViewSetTestCase(TestCase):
         )
 
     def test_get_horarios_disponiveis_data(self):
-        import ipdb ; ipdb.set_trace()
         data = {
             'pk': self.funcionario1.pk,
             'data': DATE_15_11_2022
         }
-        self.clien
         response = self.client.get(
             '/v1/funcionarios/get_horarios_disponiveis_data/',
             data=data,

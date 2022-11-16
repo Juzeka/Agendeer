@@ -1,5 +1,6 @@
-from django.urls import path, include,re_path
+from django.urls import path, include
 from rest_framework.routers import SimpleRouter
+from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -17,7 +18,6 @@ from disponibilidades.views import DisponibilidadeViewSet
 from funcionarios.views import FuncionarioViewSet
 from horarios.views import HorarioViewSet
 from servicos.views import ServicoViewSet
-from .swagger import schema_view
 
 
 routers = SimpleRouter()
@@ -45,5 +45,5 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    re_path('doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]

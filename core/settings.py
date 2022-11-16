@@ -106,3 +106,10 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(weeks=50),
+    'REFRESH_TOKEN_LIFETIME': timedelta(weeks=50),
+}

@@ -12,17 +12,17 @@ class Configuracao(models.Model):
     enviar_msg = models.BooleanField(
         auto_created=True,
         default=True,
-        verbose_name='Enviar mensagem automaticas'
+        verbose_name='Enviar mensagens automaticas'
     )
     grupos_permissao = models.BooleanField(
         auto_created=True,
         default=False,
-        verbose_name='Grupos de permissões padrão'
+        verbose_name='Grupos de permissões padrão criados'
     )
     agendamento = models.BooleanField(
         auto_created=True,
         default=True,
-        verbose_name='Aberto para agendamento'
+        verbose_name='Disponível para agendamento'
     )
     fidelidade = models.BooleanField(
         auto_created=True,

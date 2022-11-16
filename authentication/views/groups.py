@@ -18,7 +18,7 @@ class GroupViewSet(ModelViewSet):
     service_class = GroupService
 
     @action(methods=['get'], detail=False)
-    def criar_grupos_padroes(self, request):
+    def create_groups_pattens(self, request):
         msg = 'Os grupos já foram criados!'
 
         if not Configuracao.objects.first().grupos_permissao:

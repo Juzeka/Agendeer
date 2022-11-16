@@ -19,26 +19,32 @@ class FuncionarioViewSet(ModelViewSet):
         return Funcionario.objects.filter(user=request.user).first()
 
     @action(methods=['get'], detail=False)
-    def get_agendamentos_today(self, request):
+    def get_schedulings_today(self, request):
         funcionario = self.get_funcionario(request)
         data = Agendamento.objects.filter(
             funcionario=funcionario,
-            data=date.today()
+            data=date.today(),
+            concluido=False,
+            cancelado=False,
+            ativo=True
         ).values()
 
         return JsonResponse(list(data), safe=False)
 
     @action(methods=['get'], detail=False)
-    def get_agendamentos_all(self, request):
+    def get_schedulings_all(self, request):
         funcionario = self.get_funcionario(request)
         data = Agendamento.objects.filter(
             funcionario=funcionario,
+            concluido=False,
+            cancelado=False,
+            ativo=True
         ).values()
 
         return JsonResponse(list(data), safe=False)
 
     @action(methods=['get'], detail=False)
-    def get_horarios_disponiveis_data(self, request):
+    def get_schedules_available_date(self, request):
         response = self.service_class(
             pk=request.GET.get('pk'),
             data=request.GET.get('data')

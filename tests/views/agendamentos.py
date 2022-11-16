@@ -7,16 +7,22 @@ from horarios.factory import HorarioFactory
 from clientes.factory import ClienteFactory
 from servicos.factory import ServicoFactory
 from agendamentos.models import Agendamento
+from django.contrib.auth.models import User
 
 
 DATE_05_11_2022 = '2022-11-05'
 HORARIO_14_00 = '14:00'
 HORARIO_14_30 = '14:30'
 
+
 class AgendamentoViewSetTestCase(TestCase):
     models_class = Agendamento
 
     def setUp(self):
+        self.user = User.objects.create(username='rafael')
+        self.user.set_password('12345')
+        self.user.save()
+
         self.cliente1 = ClienteFactory()
         self.disponibilidade = DisponibilidadeFactory(data=DATE_05_11_2022)
         self.disponibilidade.horarios.add(
@@ -24,7 +30,7 @@ class AgendamentoViewSetTestCase(TestCase):
             HorarioFactory(horario=HORARIO_14_30)
         )
 
-        self.funcionario1 = FuncionarioFactory()
+        self.funcionario1 = FuncionarioFactory(user=self.user)
         self.funcionario1.disponibilidades.add(self.disponibilidade)
 
         self.servico1 = ServicoFactory()
@@ -41,6 +47,17 @@ class AgendamentoViewSetTestCase(TestCase):
             horario=HORARIO_14_00
         )
 
+        self.data_token = self.client.post(
+            '/api/auth/token/',
+            data={
+                'username': 'rafael',
+                'password': '12345'
+            }
+        )
+        self.headers = {
+            'HTTP_AUTHORIZATION': f'Bearer {self.data_token.data.get("access")}'
+        }
+
     def test_criar_agendamento_cliente_existente(self):
         data = {
             'cliente': self.cliente1.pk,
@@ -51,7 +68,7 @@ class AgendamentoViewSetTestCase(TestCase):
         }
 
         response = self.client.post(
-            '/v1/agendamentos/',
+            '/api/schedulings/',
             data=data,
             content_type='application/json'
         )
@@ -69,7 +86,7 @@ class AgendamentoViewSetTestCase(TestCase):
         }
 
         response = self.client.post(
-            '/v1/agendamentos/',
+            '/api/schedulings/',
             data=data,
             content_type='application/json'
         )
@@ -78,7 +95,7 @@ class AgendamentoViewSetTestCase(TestCase):
 
     def test_cancelar(self):
         response = self.client.get(
-            f'/v1/agendamentos/{self.agendamento1.pk}/cancelar/'
+            f'/api/schedulings/{self.agendamento1.pk}/cancelar/'
         )
 
         instance = self.models_class.objects.filter(
@@ -101,7 +118,7 @@ class AgendamentoViewSetTestCase(TestCase):
 
     def test_concluir(self):
         response = self.client.get(
-            f'/v1/agendamentos/{self.agendamento2.pk}/concluir/'
+            f'/api/schedulings/{self.agendamento2.pk}/concluir/'
         )
 
         instance = self.models_class.objects.filter(

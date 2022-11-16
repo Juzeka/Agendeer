@@ -1,8 +1,9 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import Response
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
 from .serializers import AgendamentoSerializerAll
 from .models import Agendamento
 from .services import AgendamentoService
@@ -46,12 +47,7 @@ class AgendamentoViewSet(ModelViewSet):
             funcionario=instance.funcionario.pk
         ).desativar_horario_data_funcionario()
 
-    #criar endpoint para usuario cancelar seu agendamento
-
-    @action(methods=['get'], detail=True)
-    def cancelar(self, request, pk):
-        agendamento = get_object_or_404(self.model_class, pk=pk)
-
+    def set_cancel(self, agendamento):
         agendamento.cancelado = True
         agendamento.ativo = False
 
@@ -63,6 +59,39 @@ class AgendamentoViewSet(ModelViewSet):
 
         agendamento.save()
 
+    @action(methods=['get'], detail=False)
+    def cancel_user(self, request):
+        try:
+            cliente = Cliente.objects.filter(
+                whatsapp=request.data.get('whatsapp')
+            ).first()
+            agendamento = get_object_or_404(
+                self.model_class,
+                cliente=cliente.pk
+            )
+
+            self.set_cancel(agendamento)
+
+            return Response(
+                data={
+                    'mensage': 'Agendamento cancelado com sucesso!'
+                },
+                status=HTTP_200_OK
+            )
+        except ValidationError as e:
+            return Response(
+                data={
+                    'mensage': 'Usúario incorreto ou não existe!'
+                },
+                status=HTTP_404_NOT_FOUND
+            )
+
+    @action(methods=['get'], detail=True)
+    def cancel(self, request, pk):
+        agendamento = get_object_or_404(self.model_class, pk=pk)
+
+        self.set_cancel(agendamento)
+
         return Response(
             data={
                 'mensage': 'Agendamento cancelado com sucesso!'
@@ -71,7 +100,7 @@ class AgendamentoViewSet(ModelViewSet):
         )
 
     @action(methods=['get'], detail=True)
-    def concluir(self, request, pk):
+    def finish(self, request, pk):
         agendamento = get_object_or_404(Agendamento, pk=pk)
 
         agendamento.ativo = False

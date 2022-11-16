@@ -1,0 +1,1 @@
+from .funcionairo import FuncionarioViewSet

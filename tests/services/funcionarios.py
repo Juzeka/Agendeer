@@ -1,8 +1,8 @@
 from django.test import TestCase
-from funcionarios.factory import FuncionarioFactory
+from funcionarios.factorys import FuncionarioFactory
 from funcionarios.services import FuncionarioService
-from disponibilidades.factory import DisponibilidadeFactory
-from horarios.factory import HorarioFactory
+from disponibilidades.factorys import DisponibilidadeFactory
+from horarios.factorys import HorarioFactory
 
 
 DATE_15_11_2022 = '2022-11-15'

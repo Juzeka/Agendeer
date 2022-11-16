@@ -1,11 +1,11 @@
 from django.test import TestCase
 from agendamentos.models import Agendamento
 from disponibilidades.models import Disponibilidade
-from agendamentos.factory import AgendamentoFactory
+from agendamentos.factorys.agendamentos import AgendamentoFactory
 from agendamentos.services import AgendamentoService
-from funcionarios.factory import FuncionarioFactory
-from disponibilidades.factory import DisponibilidadeFactory
-from horarios.factory import HorarioFactory
+from funcionarios.factorys import FuncionarioFactory
+from disponibilidades.factorys import DisponibilidadeFactory
+from horarios.factorys import HorarioFactory
 from parameterized import parameterized
 
 

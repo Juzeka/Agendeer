@@ -2,11 +2,11 @@ from django.test import TestCase
 from freezegun import freeze_time
 from rest_framework.status import HTTP_200_OK
 from django.contrib.auth.models import User
-from disponibilidades.factory import DisponibilidadeFactory
-from horarios.factory import HorarioFactory
-from funcionarios.factory import FuncionarioFactory
-from agendamentos.factory import AgendamentoFactory
-from clientes.factory import ClienteFactory
+from disponibilidades.factorys.disponibilidade import DisponibilidadeFactory
+from horarios.factorys import HorarioFactory
+from funcionarios.factorys import FuncionarioFactory
+from agendamentos.factorys import AgendamentoFactory
+from clientes.factorys import ClienteFactory
 from datetime import date, time
 
 DATE_15_11_2022 = date(year=2022, month=11, day=15)

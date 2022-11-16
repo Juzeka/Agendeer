@@ -1,11 +1,11 @@
 from django.test import TestCase
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
-from agendamentos.factory import AgendamentoFactory
-from funcionarios.factory import FuncionarioFactory
-from disponibilidades.factory import DisponibilidadeFactory
-from horarios.factory import HorarioFactory
-from clientes.factory import ClienteFactory
-from servicos.factory import ServicoFactory
+from agendamentos.factorys import AgendamentoFactory
+from funcionarios.factorys import FuncionarioFactory
+from disponibilidades.factorys.disponibilidade import DisponibilidadeFactory
+from horarios.factorys import HorarioFactory
+from clientes.factorys import ClienteFactory
+from servicos.factorys import ServicoFactory
 from agendamentos.models import Agendamento
 from django.contrib.auth.models import User
 

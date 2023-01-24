@@ -1,1 +1,1 @@
-from .serializers import AgendamentoSerializerAll
+from .agendamento import AgendamentoSerializerAll

@@ -1,0 +1,2 @@
+from .agendamentos import AgendamentoViewSetTestCase
+from .funcionarios import FuncionarioViewSetTestCase

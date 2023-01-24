@@ -1,6 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import Response
-from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
+from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_201_CREATED
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -9,6 +9,7 @@ from ..models import Agendamento
 from ..services import AgendamentoService
 from clientes.models import Cliente
 from clientes.services import ClienteService
+from clientes.serializers import ClienteSerializerAll
 
 
 class AgendamentoViewSet(ModelViewSet):
@@ -21,20 +22,27 @@ class AgendamentoViewSet(ModelViewSet):
         return self.model_class.objects.filter(ativo=True)
 
     def create(self, request, *args, **kwargs):
-        cliente = Cliente.objects.filter(
-            pk=request.data.get('cliente')
-        ).first()
+        cliente = Cliente.objects.filter(pk=request.data.get('cliente'))
 
-        if not isinstance(cliente, Cliente):
+        if not cliente.exists():
             data = request.data
+
             cliente = ClienteService(
                 nome_full=data.get('nome_full'),
                 whatsapp=data.get('whatsapp')
             ).new_cliente_em_agendamento()
+        else:
+            cliente = cliente.first()
 
-        request.data.update({'cliente': cliente.pk})
+        data = request.data.copy()
+        data.update({'cliente': cliente.pk})
 
-        return super().create(request, *args, **kwargs)
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_create(serializer)
+
+        return Response(serializer.data, status=HTTP_201_CREATED)
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
@@ -86,9 +94,9 @@ class AgendamentoViewSet(ModelViewSet):
                 status=HTTP_404_NOT_FOUND
             )
 
-    @action(methods=['get'], detail=True)
-    def cancel(self, request, pk):
-        agendamento = get_object_or_404(self.model_class, pk=pk)
+    @action(methods=['get'], detail=True, url_path='cancelar')
+    def cancel(self, request, *args, **kwargs):
+        agendamento = get_object_or_404(self.model_class, pk=kwargs.get('pk'))
 
         self.set_cancel(agendamento)
 
@@ -99,18 +107,17 @@ class AgendamentoViewSet(ModelViewSet):
             status=HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True)
-    def finish(self, request, pk):
-        agendamento = get_object_or_404(Agendamento, pk=pk)
+    @action(methods=['get'], detail=True, url_path='concluir')
+    def finish(self, request, *args, **kwargs):
+        agendamento = get_object_or_404(Agendamento, pk=kwargs.get('pk'))
 
-        agendamento.ativo = False
-        agendamento.concluido = True
-
-        agendamento.save()
-
-        return Response(
-            data={
-                'mensage': 'Agendamento concluido com sucesso!'
-            },
-            status=HTTP_200_OK
+        serializer = self.serializer_class(
+            agendamento,
+            data={'ativo': False, 'concluido': True},
+            partial=True
         )
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_update(serializer)
+
+        return Response(serializer.data)

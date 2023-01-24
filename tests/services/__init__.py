@@ -1,0 +1,3 @@
+from .agendamentos import AgendamentoServiceTestCase
+from .clientes import ClienteServiceTestCase
+from .funcionarios import FuncionarioServiceTestCase

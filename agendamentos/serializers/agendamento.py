@@ -6,4 +6,3 @@ class AgendamentoSerializerAll(serializers.ModelSerializer):
     class Meta:
         model = Agendamento
         fields = '__all__'
-        depth = 2

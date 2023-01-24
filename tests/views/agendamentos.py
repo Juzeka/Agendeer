@@ -125,13 +125,7 @@ class AgendamentoViewSetTestCase(TestCase):
             pk=self.agendamento2.pk
         ).first()
 
-        expected_result = {
-            'mensage': 'Agendamento concluido com sucesso!'
-        }
-
-        self.assertEqual(expected_result, response.data)
         self.assertEqual(HTTP_200_OK, response.status_code)
         self.assertFalse(instance.ativo)
         self.assertFalse(instance.cancelado)
         self.assertTrue(instance.concluido)
-

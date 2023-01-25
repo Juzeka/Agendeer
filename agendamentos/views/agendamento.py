@@ -9,7 +9,6 @@ from ..models import Agendamento
 from ..services import AgendamentoService
 from clientes.models import Cliente
 from clientes.services import ClienteService
-from clientes.serializers import ClienteSerializerAll
 
 
 class AgendamentoViewSet(ModelViewSet):
@@ -67,7 +66,7 @@ class AgendamentoViewSet(ModelViewSet):
 
         agendamento.save()
 
-    @action(methods=['get'], detail=False)
+    @action(methods=['post'], detail=True)
     def cancel_user(self, request):
         try:
             cliente = Cliente.objects.filter(

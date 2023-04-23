@@ -74,20 +74,19 @@ class FuncionarioViewSetTestCase(TestCase):
 
         expected_result = [
             {
-                'ativo': self.agendamento1.ativo,
-                'cancelado': self.agendamento1.cancelado,
-                'cliente_id': self.agendamento1.cliente_id,
+                'pago': self.agendamento1.pago,
+                'cliente': self.agendamento1.cliente_id,
                 'concluido': self.agendamento1.concluido,
                 'data': self.agendamento1.data.strftime('%Y-%m-%d'),
-                'funcionario_id': self.agendamento1.funcionario_id,
+                'funcionario': self.agendamento1.funcionario_id,
                 'horario': self.agendamento1.horario.strftime('%H:%M:%S'),
                 'id': self.agendamento1.pk,
-                'servico_id': self.agendamento1.servico_id
+                'servico': self.agendamento1.servico_id
             }
         ]
 
         self.assertEqual(response.status_code, HTTP_200_OK)
-        self.assertEqual(response.json(), expected_result)
+        self.assertEqual(response.data, expected_result)
 
     def test_get_schedulings_all(self):
         data_token = self.client.post(

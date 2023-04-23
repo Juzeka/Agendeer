@@ -11,6 +11,7 @@ from ..models import Agendamento
 from ..services import AgendamentoService
 from clientes.models import Cliente
 from clientes.services import ClienteService
+from utils.choices import CONCLUIDO, ATIVO
 
 
 class AgendamentoViewSet(ModelViewSet):
@@ -19,7 +20,7 @@ class AgendamentoViewSet(ModelViewSet):
     service_class = AgendamentoService
 
     def get_queryset(self):
-        return self.model_class.objects.filter(ativo=True)
+        return self.model_class.objects.filter(status=ATIVO)
 
     def create(self, request, *args, **kwargs):
         cliente = Cliente.objects.filter(pk=request.data.get('cliente'))
@@ -80,7 +81,6 @@ class AgendamentoViewSet(ModelViewSet):
 
     def cancel(self, request, *args, **kwargs):
         agendamento = get_object_or_404(self.model_class, pk=kwargs.get('pk'))
-
         self.service_class(
             instance=agendamento
         ).cancelar_agendamento()
@@ -97,7 +97,7 @@ class AgendamentoViewSet(ModelViewSet):
 
         serializer = self.serializer_class(
             agendamento,
-            data={'ativo': False, 'concluido': True},
+            data={'status': CONCLUIDO, 'pago': True},
             partial=True
         )
         serializer.is_valid(raise_exception=True)

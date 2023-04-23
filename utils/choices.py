@@ -1,0 +1,12 @@
+ATIVO = 'active'
+ATIVO_STR = 'Ativo'
+CONCLUIDO = 'concluded'
+CONCLUIDO_STR = 'Concluído'
+CANCELADO = 'canceled'
+CANCELADO_STR = 'Cancelado'
+
+STATUS_AGENDAMENTO_CHOICES = (
+    (ATIVO, ATIVO_STR),
+    (CONCLUIDO, CONCLUIDO_STR),
+    (CANCELADO, CANCELADO_STR)
+)

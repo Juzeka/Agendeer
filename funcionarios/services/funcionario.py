@@ -1,4 +1,5 @@
 from ..models import Funcionario
+from horarios.serializers import HorarioSerializerAll
 
 
 class FuncionarioService:
@@ -9,16 +10,11 @@ class FuncionarioService:
     def get_horarios_disponiveis_data(self):
         instance = Funcionario.objects.filter(pk=self.pk).first()
         disponibilidades = instance.disponibilidades.filter(
-            data=self.data
+            data=self.data,
+            ativo=True
         ).first()
 
         horarios = disponibilidades.horarios.filter(ativo=True)
+        serializer = HorarioSerializerAll(horarios, many=True)
 
-        data = [
-            {
-                'pk':obj.pk,
-                'horario': obj.horario.strftime('%H:%M')
-            } for obj in horarios
-        ]
-
-        return data
+        return serializer.data

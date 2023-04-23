@@ -125,6 +125,7 @@ class AgendamentoViewSetTestCase(TestCase):
             data=DATE_05_11_2022,
             horario=HORARIO_15_00
         )
+
         response = self.client.get(
             f'{self.router_class}cancel/{agendamento.pk}/',
             **self.headers

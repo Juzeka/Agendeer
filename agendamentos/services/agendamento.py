@@ -5,6 +5,7 @@ from funcionarios.models import Funcionario
 from agendamentos.models import Agendamento
 from horarios.serializers import HorarioSerializerAll
 from agendamentos.serializers import AgendamentoSerializerAll
+from utils.choices import CANCELADO
 
 
 class AgendamentoService:
@@ -58,7 +59,7 @@ class AgendamentoService:
     def cancelar_agendamento(self):
         serializer = self.serializer_class(
             instance=self.instance,
-            data={'ativo': False, 'cancelado': True},
+            data={'status': CANCELADO},
             partial=True
         )
 

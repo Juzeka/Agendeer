@@ -3,6 +3,7 @@ from funcionarios.factorys import FuncionarioFactory
 from funcionarios.services import FuncionarioService
 from disponibilidades.factorys import DisponibilidadeFactory
 from horarios.factorys import HorarioFactory
+from collections import OrderedDict
 
 
 DATE_15_11_2022 = '2022-11-15'
@@ -28,14 +29,16 @@ class FuncionarioServiceTestCase(TestCase):
         ).get_horarios_disponiveis_data()
 
         expected_result = [
-            {
-                'pk': self.horario1.pk,
-                'horario': self.horario1.horario
-            },
-            {
-                'pk': self.horario2.pk,
-                'horario': self.horario2.horario
-            }
+            OrderedDict({
+                'id': self.horario1.pk,
+                'horario': self.horario1.horario,
+                'ativo': self.horario1.ativo
+            }),
+            OrderedDict({
+                'id': self.horario2.pk,
+                'horario': self.horario2.horario,
+                'ativo': self.horario2.ativo
+            })
         ]
 
         self.assertEqual(expected_result, response)

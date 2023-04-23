@@ -8,5 +8,6 @@ class ServicoFactory(DjangoModelFactory):
     class Meta:
         model = Servico
 
+    titulo = Sequence(lambda n: 'Titulo do Serviço %d' % n)
     descricao = Sequence(lambda n: 'Descrição de Serviço %d' % n)
     valor = Decimal(random.uniform(10,30)).quantize(Decimal('.01'))

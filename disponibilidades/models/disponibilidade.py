@@ -7,6 +7,10 @@ class Disponibilidade(models.Model):
         'horarios.Horario',
         related_name='disponibilidade_horario',
     )
+    ativo = models.BooleanField(
+        auto_created=True,
+        default=True,
+    )
 
     def __str__(self) -> str:
         return f'{self.data}'

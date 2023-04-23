@@ -23,8 +23,10 @@ class FuncionarioViewSetTestCase(TestCase):
         self.disponibilidade1 = DisponibilidadeFactory(data=DATE_15_11_2022)
         self.disponibilidade1.horarios.add(self.horario1, self.horario2)
 
-        self.user = User.objects.create(username='rafael')
-        self.user.set_password('12345')
+        self.user = User.objects.create_superuser(
+            username='rafael',
+            password='12345'
+        )
         self.user.save()
 
         self.funcionario1 = FuncionarioFactory(user=self.user)

@@ -1,37 +1,73 @@
+import random
+import string
 from django.shortcuts import get_object_or_404
 from funcionarios.models import Funcionario
+from agendamentos.models import Agendamento
+from horarios.serializers import HorarioSerializerAll
+from agendamentos.serializers import AgendamentoSerializerAll
 
 
 class AgendamentoService:
+    model_class = Agendamento
+    serializer_class = AgendamentoSerializerAll
+
     def __init__(self, *args, **kwargs):
         self.data = kwargs.get('data')
         self.horario = kwargs.get('horario')
         self.funcionario = kwargs.get('funcionario')
-        self.ativo = None
+        self.status_horario = kwargs.get('status_horario')
+        self.instance = kwargs.get('instance')
+
+    def gerar_protocolo(self):
+        letras = ''.join(random.choices(string.ascii_uppercase, k=4))
+        numeros = ''.join(random.choices(string.digits, k=6))
+
+        return f'{letras}{numeros}'
+
+    def get_protocolo(self):
+        protocolo = self.gerar_protocolo()
+
+        while self.model_class.objects.filter(protocolo=protocolo).exists():
+            protocolo = self.gerar_protocolo()
+
+        return protocolo
 
     def alterar_status_horario_funcionario(self):
-        funcionairo = get_object_or_404(
-            Funcionario,
-            pk=self.funcionario
+        funcionairo = get_object_or_404(Funcionario, pk=self.funcionario)
+        disponibilidade = funcionairo.disponibilidades.filter(
+            data=self.data,
+            ativo=True
         )
 
-        disponibilidade = funcionairo.disponibilidades.filter(
-            data=self.data
-        ).first()
+        if disponibilidade.exists():
+            disponibilidade = disponibilidade.first()
+            horario = disponibilidade.horarios.filter(horario=self.horario)
 
-        horario = disponibilidade.horarios.filter(
-            horario=self.horario
-        ).first()
+            if horario.exists():
+                horario = horario.first()
 
-        horario.ativo = self.ativo
-        horario.save()
+                serializer = HorarioSerializerAll(
+                    instance=horario,
+                    data={'ativo': self.status_horario},
+                    partial=True
+                )
 
-    def desativar_horario_data_funcionario(self):
-        self.ativo = False
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
 
-        self.alterar_status_horario_funcionario()
+    def cancelar_agendamento(self):
+        serializer = self.serializer_class(
+            instance=self.instance,
+            data={'ativo': False, 'cancelado': True},
+            partial=True
+        )
 
-    def ativar_horario_data_funcionario(self):
-        self.ativo = True
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        self.data = self.instance.data
+        self.horario = self.instance.horario
+        self.funcionario = self.instance.funcionario.pk
+        self.status_horario = True
 
         self.alterar_status_horario_funcionario()

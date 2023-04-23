@@ -2,8 +2,11 @@ from django.db import models
 
 
 class Agendamento(models.Model):
-    # criar um campo de indentificação unico do agendamento para enviar para o cliente
-    # protocolo
+    protocolo = models.CharField(
+        max_length=10,
+        unique=True,
+        verbose_name='Protocolo'
+    )
     cliente = models.ForeignKey('clientes.Cliente', on_delete=models.PROTECT)
     funcionario = models.ForeignKey(
         'funcionarios.Funcionario',

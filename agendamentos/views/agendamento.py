@@ -1,10 +1,12 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import Response
-from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_201_CREATED
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import ValidationError
-from ..serializers import AgendamentoSerializerAll
+from ..serializers import (
+    AgendamentoSerializerAll,
+    AgendamentoSerializerResponseCreate
+)
 from ..models import Agendamento
 from ..services import AgendamentoService
 from clientes.models import Cliente
@@ -12,10 +14,9 @@ from clientes.services import ClienteService
 
 
 class AgendamentoViewSet(ModelViewSet):
-    authentication_classes = []
-    permission_classes = []
     serializer_class = AgendamentoSerializerAll
     model_class = Agendamento
+    service_class = AgendamentoService
 
     def get_queryset(self):
         return self.model_class.objects.filter(ativo=True)
@@ -33,71 +34,42 @@ class AgendamentoViewSet(ModelViewSet):
         else:
             cliente = cliente.first()
 
-        data = request.data.copy()
-        data.update({'cliente': cliente.pk})
+        data_extra = {
+            'cliente': cliente.pk,
+            'protocolo': self.service_class().get_protocolo()
+        }
+        data = dict(data_extra, **request.data)
 
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
 
         self.perform_create(serializer)
 
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        data = AgendamentoSerializerResponseCreate(serializer.instance).data
+
+        return Response(data, status=HTTP_201_CREATED)
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
 
         instance = serializer.instance
 
-        AgendamentoService(
+        self.service_class(
             data=instance.data,
             horario=instance.horario,
-            funcionario=instance.funcionario.pk
-        ).desativar_horario_data_funcionario()
+            funcionario=instance.funcionario.pk,
+            status_horario=False
+        ).alterar_status_horario_funcionario()
 
-    def set_cancel(self, agendamento):
-        agendamento.cancelado = True
-        agendamento.ativo = False
+    def cancel_user(self, request, *args, **kwargs):
+        agendamento = get_object_or_404(
+            self.model_class,
+            protocolo=kwargs.get('protocolo')
+        )
 
-        AgendamentoService(
-            data=agendamento.data,
-            horario=agendamento.horario,
-            funcionario=agendamento.funcionario.pk
-        ).ativar_horario_data_funcionario()
-
-        agendamento.save()
-
-    @action(methods=['post'], detail=True)
-    def cancel_user(self, request):
-        try:
-            cliente = Cliente.objects.filter(
-                whatsapp=request.data.get('whatsapp')
-            ).first()
-            agendamento = get_object_or_404(
-                self.model_class,
-                cliente=cliente.pk
-            )
-
-            self.set_cancel(agendamento)
-
-            return Response(
-                data={
-                    'mensage': 'Agendamento cancelado com sucesso!'
-                },
-                status=HTTP_200_OK
-            )
-        except ValidationError as e:
-            return Response(
-                data={
-                    'mensage': 'Usúario incorreto ou não existe!'
-                },
-                status=HTTP_404_NOT_FOUND
-            )
-
-    @action(methods=['get'], detail=True, url_path='cancelar')
-    def cancel(self, request, *args, **kwargs):
-        agendamento = get_object_or_404(self.model_class, pk=kwargs.get('pk'))
-
-        self.set_cancel(agendamento)
+        self.service_class(
+            instance=agendamento
+        ).cancelar_agendamento()
 
         return Response(
             data={
@@ -106,9 +78,22 @@ class AgendamentoViewSet(ModelViewSet):
             status=HTTP_200_OK
         )
 
-    @action(methods=['get'], detail=True, url_path='concluir')
+    def cancel(self, request, *args, **kwargs):
+        agendamento = get_object_or_404(self.model_class, pk=kwargs.get('pk'))
+
+        self.service_class(
+            instance=agendamento
+        ).cancelar_agendamento()
+
+        return Response(
+            data={
+                'mensage': 'Agendamento cancelado com sucesso!'
+            },
+            status=HTTP_200_OK
+        )
+
     def finish(self, request, *args, **kwargs):
-        agendamento = get_object_or_404(Agendamento, pk=kwargs.get('pk'))
+        agendamento = get_object_or_404(self.model_class, pk=kwargs.get('pk'))
 
         serializer = self.serializer_class(
             agendamento,
@@ -119,4 +104,4 @@ class AgendamentoViewSet(ModelViewSet):
 
         self.perform_update(serializer)
 
-        return Response(serializer.data)
+        return Response({'mensage': 'Agendamento finalizado!'})

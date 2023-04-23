@@ -9,7 +9,7 @@ urlpatterns = [
         name='list'
     ),
     path(
-        'create',
+        'create/',
         AgendamentoViewSet.as_view(actions={'post': 'create'}),
         name='create'
     ),
@@ -29,17 +29,17 @@ urlpatterns = [
         name='destroy'
     ),
     path(
-        'cancel_schedulings_user/<str:whatsapp>',
+        'cancel/user/<str:protocolo>/',
         AgendamentoViewSet.as_view(actions={'get': 'cancel_user'}),
         name='cancel_user'
     ),
     path(
-        'cancel_schedulings/<int:pk>',
+        'cancel/<int:pk>/',
         AgendamentoViewSet.as_view(actions={'get': 'cancel'}),
         name='cancel'
     ),
     path(
-        'finish_schedulings/<int:pk>',
+        'finish/<int:pk>/',
         AgendamentoViewSet.as_view(actions={'get': 'finish'}),
         name='finish'
     ),

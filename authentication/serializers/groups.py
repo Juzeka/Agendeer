@@ -7,3 +7,9 @@ class GroupSerializerAll(serializers.ModelSerializer):
         model = Group
         fields = '__all__'
         depth = 2
+
+
+class GroupCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = '__all__'

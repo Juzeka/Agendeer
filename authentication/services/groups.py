@@ -1,4 +1,4 @@
-from ..serializers import Group, Permission
+from ..serializers import GroupCreateSerializer, Permission
 from core.permissions import PERMISSIONS_PADRAO
 
 
@@ -7,20 +7,27 @@ class GroupService:
         ...
 
     def criar_grupos_padroes(self):
+        grupos = list()
+
         for padrao in PERMISSIONS_PADRAO:
+            data = {'name': padrao.get('name'), 'permissions': list()}
             permissions = self.get_permissions_model(
                 padrao.get('models_permissions')
             )
 
-            group = Group(**{'name':padrao.get('name')})
-            group.save()
+            list_permissions_pks = [perm.pk for perm in permissions]
+            data.update({'permissions': list_permissions_pks})
 
-            for p in permissions: group.permissions.add(p)
+            serializer = GroupCreateSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-            group.save()
+            grupos.append(serializer.instance)
+
+        return grupos
 
     def get_permissions_model(self, models_permissions):
-        permissions = []
+        permissions = list()
 
         for obj in models_permissions:
             permissions += [

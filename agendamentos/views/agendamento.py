@@ -1,7 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
-from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from ..serializers import (
     AgendamentoSerializerAll,

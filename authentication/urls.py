@@ -139,4 +139,9 @@ urlpatterns += [
         GroupViewSet.as_view(actions={'delete': 'destroy'}),
         name='destroy'
     ),
+    path(
+        'groups/create_groups_pattens/',
+        GroupViewSet.as_view(actions={'get': 'create_groups_pattens'}),
+        name='create_groups_pattens'
+    ),
 ]

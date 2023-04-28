@@ -9,7 +9,6 @@ from ..services import GroupService
 from configuracoes.models import Configuracao
 
 
-# manter temporariamente livre
 class GroupViewSet(ModelViewSet):
     authentication_classes = []
     permission_classes = []

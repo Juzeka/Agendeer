@@ -1,1 +1,4 @@
-from .funcionario import FuncionarioSerializerAll
+from .funcionario import (
+    FuncionarioSerializerAll,
+    FuncionarioCreateSerializerAll
+)

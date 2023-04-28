@@ -52,7 +52,7 @@ PERMISSIONS_PADRAO = [
         'name': 'Funcionário(a)',
         'models_permissions': [
             {
-                'permissions': ['view', 'add', 'change', 'delete'],
+                'permissions': ['view', 'add', 'change'],
                 'model': 'agendamento'
             },
             {
@@ -72,7 +72,7 @@ PERMISSIONS_PADRAO = [
                 'model': 'funcionario'
             },
             {
-                'permissions': ['view'],
+                'permissions': ['view', 'change'],
                 'model': 'servico'
             },
         ]
@@ -81,31 +81,31 @@ PERMISSIONS_PADRAO = [
         'name': 'Secretário(a)',
         'models_permissions': [
             {
-                'permissions': ['view', 'add', 'change', 'delete'],
+                'permissions': ['view', 'add', 'change'],
                 'model': 'user'
             },
             {
-                'permissions': ['view', 'add', 'change', 'delete'],
+                'permissions': ['view', 'add', 'change'],
                 'model': 'agendamento'
             },
             {
-                'permissions': ['view', 'add', 'change', 'delete'],
+                'permissions': ['view', 'add', 'change'],
                 'model': 'cliente'
             },
             {
-                'permissions': ['view', 'add', 'change', 'delete'],
+                'permissions': ['view', 'add', 'change'],
                 'model': 'disponibilidade'
             },
             {
-                'permissions': ['view', 'add', 'change', 'delete'],
+                'permissions': ['view', 'add', 'change'],
                 'model': 'horario'
             },
             {
-                'permissions': ['view', 'add', 'change', 'delete'],
+                'permissions': ['view', 'add', 'change'],
                 'model': 'funcionario'
             },
             {
-                'permissions': ['view', 'add', 'change', 'delete'],
+                'permissions': ['view', 'add', 'change'],
                 'model': 'servico'
             },
         ]

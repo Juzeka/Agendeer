@@ -9,7 +9,7 @@ urlpatterns = [
         name='list'
     ),
     path(
-        'create',
+        'create/',
         FuncionarioViewSet.as_view(actions={'post': 'create'}),
         name='create'
     ),
@@ -24,17 +24,17 @@ urlpatterns = [
         name='detail'
     ),
     path(
-        'get_schedulings_today',
+        'get_schedulings_today/',
         FuncionarioViewSet.as_view(actions={'get': 'get_schedulings_today'}),
         name='get_schedulings_today'
     ),
     path(
-        'get_schedulings_all',
+        'get_schedulings_all/',
         FuncionarioViewSet.as_view(actions={'get': 'get_schedulings_all'}),
         name='get_schedulings_all'
     ),
     path(
-        'get_schedules_available_date',
+        'get_schedules_available_date/',
         FuncionarioViewSet.as_view(actions={'get': 'get_schedules_available_date'}),
         name='get_schedules_available_date'
     ),

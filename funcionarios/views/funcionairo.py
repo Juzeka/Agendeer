@@ -1,15 +1,17 @@
-from django.http import JsonResponse
 from rest_framework.views import Response
-from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.status import HTTP_200_OK
-from ..serializers import FuncionarioSerializerAll
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
+from ..serializers import (
+    FuncionarioSerializerAll,
+    FuncionarioCreateSerializerAll
+)
 from ..models import Funcionario
 from agendamentos.models import Agendamento
 from datetime import date
 from ..services import FuncionarioService
 from agendamentos.serializers import AgendamentoSerializerAll
 from utils.choices import ATIVO
+from authentication.services import UserService
 
 
 class FuncionarioViewSet(ModelViewSet):
@@ -19,6 +21,22 @@ class FuncionarioViewSet(ModelViewSet):
 
     def get_funcionario(self, request):
         return Funcionario.objects.filter(user=request.user).first()
+
+    def create(self, request, *args, **kwargs):
+        user = UserService(data=request.data).create_user()
+        data = dict({**request.data, 'user': user.instance.pk})
+
+        serializer = FuncionarioCreateSerializerAll(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            data=serializer.data,
+            status=HTTP_201_CREATED,
+            headers=headers
+        )
 
     def get_schedulings_today(self, request, *args, **kwargs):
         funcionario = self.get_funcionario(request)

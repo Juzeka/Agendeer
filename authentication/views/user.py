@@ -5,10 +5,8 @@ from ..serializers import (
 )
 from django.contrib.auth.hashers import make_password
 
-# manter temporariamente livre
+
 class UserViewSet(ModelViewSet):
-    authentication_classes = []
-    permission_classes = []
     serializer_class = UserSerializerAll
     queryset = User.objects.all()
 

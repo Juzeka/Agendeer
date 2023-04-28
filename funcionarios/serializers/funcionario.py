@@ -7,3 +7,9 @@ class FuncionarioSerializerAll(serializers.ModelSerializer):
         model = Funcionario
         fields = '__all__'
         depth = 2
+
+
+class FuncionarioCreateSerializerAll(serializers.ModelSerializer):
+    class Meta:
+        model = Funcionario
+        fields = ['user', 'nome_full']

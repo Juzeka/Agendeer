@@ -41,8 +41,7 @@ class Configuracao(models.Model):
     instagram = models.URLField(max_length=200, blank=True, null=True)
     whatsapp = models.CharField(max_length=11, blank=False, null=False)
     celular = models.CharField(max_length=11, blank=False, null=False)
-    gerar_disponibilidade = models.CharField(
-        max_length=20,
+    gerar_disponibilidade = models.IntegerField(
         choices=DISPONIBILIDADES_CHOICES,
         default=1
     )
